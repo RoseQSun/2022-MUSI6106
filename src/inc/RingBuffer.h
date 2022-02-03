@@ -13,16 +13,23 @@ class CRingBuffer
 {
 public:
     explicit CRingBuffer(int iBufferLengthInSamples) :
-        m_iBuffLength(iBufferLengthInSamples)
+        m_iBuffLength(iBufferLengthInSamples),
+        m_iReadIndex(0),
+        m_iWriteIndex(0),
+        m_ptBuff(0)
     {
         assert(iBufferLengthInSamples > 0);
 
         // allocate and init
+
+        m_ptBuff = new T[m_iBuffLength];
     }
 
     virtual ~CRingBuffer()
     {
         // free memory
+        delete [] m_ptBuff;
+        m_ptBuff = nullptr;
     }
 
     /*! add a new value of type T to write index and increment write index
@@ -31,6 +38,8 @@ public:
     */
     void putPostInc (T tNewValue)
     {
+        put(tNewValue);
+        m_iWriteIndex = (m_iWriteIndex + 1 ) % m_iBuffLength;
     }
 
     /*! add a new value of type T to write index
@@ -39,6 +48,7 @@ public:
     */
     void put(T tNewValue)
     {
+        m_ptBuff[m_iWriteIndex] = tNewValue;
     }
     
     /*! return the value at the current read index and increment the read pointer
@@ -46,7 +56,9 @@ public:
     */
     T getPostInc()
     {
-        return static_cast<T>(-1);
+        T currentValue = get();
+        m_iReadIndex = (m_iReadIndex + 1 ) % m_iBuffLength;
+        return currentValue;
     }
 
     /*! return the value at the current read index
@@ -54,7 +66,7 @@ public:
     */
     T get() const
     {
-        return static_cast<T>(-1);
+        return m_ptBuff[m_iReadIndex];
     }
     
     /*! set buffer content and indices to 0
@@ -62,6 +74,9 @@ public:
     */
     void reset()
     {
+        memset (m_ptBuff, 0, sizeof(T) * m_iBuffLength);
+        m_iReadIndex  = 0;
+        m_iWriteIndex = 0;
     }
 
     /*! return the current index for writing/put
@@ -69,7 +84,7 @@ public:
     */
     int getWriteIdx() const
     {
-        return -1;
+        return m_iWriteIndex;
     }
 
     /*! move the write index to a new position
@@ -78,6 +93,7 @@ public:
     */
     void setWriteIdx(int iNewWriteIdx)
     {
+        m_iWriteIndex = iNewWriteIdx;
     }
 
     /*! return the current index for reading/get
@@ -85,7 +101,7 @@ public:
     */
     int getReadIdx() const
     {
-        return -1;
+        return m_iReadIndex;
     }
 
     /*! move the read index to a new position
@@ -94,6 +110,7 @@ public:
     */
     void setReadIdx(int iNewReadIdx)
     {
+        m_iReadIndex = iNewReadIdx;
     }
 
     /*! returns the number of values currently buffered (note: 0 could also mean the buffer is full!)
@@ -101,7 +118,7 @@ public:
     */
     int getNumValuesInBuffer() const
     {
-        return -1;
+        return (m_iWriteIndex - m_iReadIndex + m_iBuffLength) % m_iBuffLength;
     }
 
     /*! returns the length of the internal buffer
@@ -109,12 +126,16 @@ public:
     */
     int getLength() const
     {
-        return -1;
+        return m_iBuffLength;
     }
 private:
     CRingBuffer();
     CRingBuffer(const CRingBuffer& that);
 
     int m_iBuffLength;              //!< length of the internal buffer
+    int m_iReadIndex;
+    int m_iWriteIndex;
+
+    T* m_ptBuff;
 };
 #endif // __RingBuffer_hdr__
