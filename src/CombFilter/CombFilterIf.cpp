@@ -8,6 +8,8 @@
 #include "Util.h"
 
 #include "CombFilterIf.h"
+#include "RingBuffer.h"
+#include "CombFilter.h"
 
 static const char*  kCMyProjectBuildDate = __DATE__;
 
@@ -56,35 +58,52 @@ const char*  CCombFilterIf::getBuildDate ()
 
 Error_t CCombFilterIf::create (CCombFilterIf*& pCCombFilter)
 {
+    pCCombFilter = new CCombFilterIf ();
     return Error_t::kNoError;
 }
 
 Error_t CCombFilterIf::destroy (CCombFilterIf*& pCCombFilter)
 {
+    delete pCCombFilter;
+    pCCombFilter = nullptr;
     return Error_t::kNoError;
 }
 
 Error_t CCombFilterIf::init (CombFilterType_t eFilterType, float fMaxDelayLengthInS, float fSampleRateInHz, int iNumChannels)
 {
+    switch (eFilterType){
+        case CCombFilterIf::CombFilterType_t::kCombFIR:
+            m_pCCombFilter = new CCombFilterFIR (fMaxDelayLengthInS, fSampleRateInHz, iNumChannels);
+            break;
+        case CCombFilterIf::CombFilterType_t::kCombIIR:
+            m_pCCombFilter = new CCombFilterIIR (fMaxDelayLengthInS, fSampleRateInHz, iNumChannels);
+            break;
+    }
+    m_fSampleRate = fSampleRateInHz;
+    m_bIsInitialized = true;
     return Error_t::kNoError;
 }
 
 Error_t CCombFilterIf::reset ()
 {
+    delete m_pCCombFilter;
+    m_pCCombFilter = nullptr;
+    m_fSampleRate = 0;
+    m_bIsInitialized = false;
     return Error_t::kNoError;
 }
 
 Error_t CCombFilterIf::process (float **ppfInputBuffer, float **ppfOutputBuffer, int iNumberOfFrames)
 {
-    return Error_t::kNoError;
+    return m_pCCombFilter->process(ppfInputBuffer, ppfOutputBuffer, iNumberOfFrames);
 }
 
 Error_t CCombFilterIf::setParam (FilterParam_t eParam, float fParamValue)
 {
-    return Error_t::kNoError;
+    return m_pCCombFilter->setParam(eParam,fParamValue);
 }
 
 float CCombFilterIf::getParam (FilterParam_t eParam) const
 {
-    return 0;
+    return m_pCCombFilter->getParam(eParam);
 }
