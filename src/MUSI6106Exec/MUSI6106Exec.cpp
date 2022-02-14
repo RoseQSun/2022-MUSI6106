@@ -215,8 +215,8 @@ void     showClInfo()
 
 void example1 () {
     arg argall;
-    argall.inputAudioPath = "/Users/roseqsun/Desktop/MajorTom16.wav";
-    argall.outputAudioPath = "/Users/roseqsun/Desktop/MajorTom16FIR.wav";
+    argall.inputAudioPath = "./MajorTom16.wav";
+    argall.outputAudioPath = "./MajorTom16FIR.wav";
     argall.blockSize = 1024;
     argall.filterType = CCombFilterIf::kCombFIR;
     argall.gain = 0.5;
@@ -227,8 +227,8 @@ void example1 () {
 void example2 () {
     cout << "Example 2" << endl;
     arg argall;
-    argall.inputAudioPath = "/Users/roseqsun/Desktop/sweep.wav";
-    argall.outputAudioPath = "/Users/roseqsun/Desktop/sweepIIR.wav";
+    argall.inputAudioPath = "./sweep.wav";
+    argall.outputAudioPath = "./sweepIIR.wav";
     argall.blockSize = 1024;
     argall.filterType = CCombFilterIf::kCombIIR;
     argall.gain = 0.5;
@@ -239,8 +239,8 @@ void example2 () {
 // FIR: Output is zero if input freq matches feedforward
 void test1 () {
     arg argall;
-    argall.inputAudioPath = "/Users/roseqsun/Desktop/Asine.wav";
-    argall.outputAudioPath = "/Users/roseqsun/Desktop/AsineFIR.wav";
+    argall.inputAudioPath = "./Asine.wav";
+    argall.outputAudioPath = "./AsineFIR.wav";
     argall.blockSize = 1024;
     argall.filterType = CCombFilterIf::kCombFIR;
     argall.gain = -1;
@@ -251,8 +251,8 @@ void test1 () {
 // IIR: amount of magnitude increase/decrease if input freq matches feedback
 void test2 () {
     arg argall;
-    argall.inputAudioPath = "/Users/roseqsun/Desktop/Asine.wav";
-    argall.outputAudioPath = "/Users/roseqsun/Desktop/AsineIIR.wav";
+    argall.inputAudioPath = "./Asine.wav";
+    argall.outputAudioPath = "./AsineIIR.wav";
     argall.blockSize = 1024;
     argall.filterType = CCombFilterIf::kCombIIR;
     argall.gain = -1;
@@ -263,8 +263,8 @@ void test2 () {
 //// FIR/IIR: correct result for VARYING input block size
 void test3_FIR () {
     arg argall;
-    argall.inputAudioPath = "/Users/roseqsun/Desktop/Asine.wav";
-    argall.outputAudioPath = "/Users/roseqsun/Desktop/AsineFIRBlock.wav";
+    argall.inputAudioPath = "./Asine.wav";
+    argall.outputAudioPath = "./AsineFIRBlock.wav";
     argall.blockSize = 512; //1024
     argall.filterType = CCombFilterIf::kCombFIR;
     argall.gain = 0.5;
@@ -274,8 +274,8 @@ void test3_FIR () {
 
 void test3_IIR () {
     arg argall;
-    argall.inputAudioPath = "/Users/roseqsun/Desktop/Asine.wav";
-    argall.outputAudioPath = "/Users/roseqsun/Desktop/AsineIIRBlock.wav";
+    argall.inputAudioPath = "./Asine.wav";
+    argall.outputAudioPath = "./AsineIIRBlock.wav";
     argall.blockSize = 512; //1024
     argall.filterType = CCombFilterIf::kCombIIR;
     argall.gain = 0.5;
@@ -286,8 +286,8 @@ void test3_IIR () {
 // FIR/IIR: correct processing for zero input signal
 void test4_FIR () {
     arg argall;
-    argall.inputAudioPath = "/Users/roseqsun/Desktop/AsineFIR.wav";
-    argall.outputAudioPath = "/Users/roseqsun/Desktop/ZeroOutputFIR.wav";
+    argall.inputAudioPath = "./AsineFIR.wav";
+    argall.outputAudioPath = "./ZeroOutputFIR.wav";
     argall.blockSize = 1024;
     argall.filterType = CCombFilterIf::kCombFIR;
     argall.gain = 0.5;
@@ -297,8 +297,8 @@ void test4_FIR () {
 
 void test4_IIR () {
     arg argall;
-    argall.inputAudioPath = "/Users/roseqsun/Desktop/AsineFIR.wav";
-    argall.outputAudioPath = "/Users/roseqsun/Desktop/ZeroOutputIIR.wav";
+    argall.inputAudioPath = "./AsineFIR.wav";
+    argall.outputAudioPath = "./ZeroOutputIIR.wav";
     argall.blockSize = 1024;
     argall.filterType = CCombFilterIf::kCombIIR;
     argall.gain = 0.5;
@@ -310,8 +310,8 @@ void test4_IIR () {
 // FIR/IIR: correct processing for zero gain and zero delay
 void test5 () {
     arg argalll;
-    argalll.inputAudioPath = "/Users/roseqsun/Desktop/Asine.wav";
-    argalll.outputAudioPath = "/Users/roseqsun/Desktop/ZeroProcessing.wav";
+    argalll.inputAudioPath = "./Asine.wav";
+    argalll.outputAudioPath = "./ZeroProcessing.wav";
     argalll.blockSize = 1024;
     argalll.filterType = CCombFilterIf::kCombIIR;
     argalll.gain = 0;
