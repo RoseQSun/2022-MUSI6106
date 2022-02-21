@@ -1,5 +1,7 @@
 #include <iostream>
 #include <ctime>
+#include <cmath>
+
 
 #include "MUSI6106Config.h"
 
@@ -12,8 +14,9 @@ using std::endl;
 // local function declarations
 void    showClInfo ();
 
-void example1 ();
-void example2 ();
+//void example1 ();
+//void example2 ();
+void sineGenerator();
 void test1 ();
 void test2 ();
 void test3_FIR ();
@@ -31,31 +34,6 @@ typedef struct arg{
     float delay;};
 
 /////////////////////////////////////////////////////////////////////////////////
-// main function
-int main(int argc, char* argv[])
-{
-    example1();
-    cout << "Example 1" << endl;
-    example2();
-    cout << "Example 2" << endl;
-    test1 ();
-    cout << "Test 1" << endl;
-    test2 ();
-    cout << "Test 2" << endl;
-    test3_FIR ();
-    cout << "Test 3 FIR" << endl;
-    test3_IIR ();
-    cout << "Test 3 IIR" << endl;
-    test4_FIR ();
-    cout << "Test 4 FIR" << endl;
-    test4_IIR ();
-    cout << "Test 4 IIR" << endl;
-    test5 ();
-    cout << "Test 5" << endl;
-    showClInfo();
-    return 0;
-}
-
 int filtering(arg argall){
     std::string sInputFilePath = argall.inputAudioPath;                 //!< file paths
     std::string sOutputFilePath = argall.outputAudioPath;
@@ -77,7 +55,6 @@ int filtering(arg argall){
     float fDelayLength = argall.delay;
     float fGain = argall.gain;
     float fMaxDelayLengthInS = 1;
-
 
     //////////////////////////////////////////////////////////////////////////////
     // open the input wave file
@@ -204,6 +181,40 @@ int filtering(arg argall){
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////
+
+// main function
+int main(int argc, char* argv[])
+{
+    if (argc == 0) {
+//        example1();
+//        example2();
+        test1 ();
+        test2 ();
+        test3_FIR ();
+        test3_IIR ();
+        test4_FIR ();
+        test4_IIR ();
+        test5 ();
+        showClInfo();
+    }
+    else {
+        arg argall;
+        argall.inputAudioPath = argv[1];
+        argall.outputAudioPath = argall.inputAudioPath + "filtered.wav";
+        argall.blockSize = 1024;
+        if (argv[2]=="fir") {
+            argall.filterType = CCombFilterIf::kCombFIR;
+        }
+        else if (argv[2]=="iir") {
+            argall.filterType = CCombFilterIf::kCombIIR;
+        }
+        argall.gain = atof(argv[4]);
+        argall.delay = atof(argv[3]);
+        return filtering(argall);
+    }
+}
+
 void     showClInfo()
 {
     cout << "MUSI6106 Assignment Executable" << endl;
@@ -213,10 +224,14 @@ void     showClInfo()
     return;
 }
 
+/////////////////////////////////////////////////////////////////////////////////
+
+
 void example1 () {
+    cout << "Example 1" << endl;
     arg argall;
-    argall.inputAudioPath = "./MajorTom16.wav";
-    argall.outputAudioPath = "./MajorTom16FIR.wav";
+    argall.inputAudioPath = "/Users/roseqsun/Desktop/MajorTom16.wav";
+    argall.outputAudioPath = "/Users/roseqsun/Desktop/MajorTom16FIR.wav";
     argall.blockSize = 1024;
     argall.filterType = CCombFilterIf::kCombFIR;
     argall.gain = 0.5;
@@ -227,83 +242,51 @@ void example1 () {
 void example2 () {
     cout << "Example 2" << endl;
     arg argall;
-    argall.inputAudioPath = "./sweep.wav";
-    argall.outputAudioPath = "./sweepIIR.wav";
+    argall.inputAudioPath = "/Users/roseqsun/Desktop/sweep.wav";
+    argall.outputAudioPath = "/Users/roseqsun/Desktop/sweepIIR.wav";
     argall.blockSize = 1024;
     argall.filterType = CCombFilterIf::kCombIIR;
     argall.gain = 0.5;
     argall.delay = 0.5;
     filtering(argall);
+}
+
+const double PI  =3.141592653589793238463;
+
+void sinWave(float*& pfSineBuffer, float fSampleRateInHz, float fLenInSec, float fFreq){
+    int iLenInSample = fSampleRateInHz * fLenInSec;
+    pfSineBuffer = new float[iLenInSample];
+    for (int i = 0; i < iLenInSample; i++){
+        pfSineBuffer[i] = 1 * sin((2 * PI * fFreq / fSampleRateInHz) * i);
+    }
 }
 
 // FIR: Output is zero if input freq matches feedforward
 void test1 () {
-    arg argall;
-    argall.inputAudioPath = "./Asine.wav";
-    argall.outputAudioPath = "./AsineFIR.wav";
-    argall.blockSize = 1024;
-    argall.filterType = CCombFilterIf::kCombFIR;
-    argall.gain = -1;
-    argall.delay = 1;
-    filtering(argall);
+
 }
 
 // IIR: amount of magnitude increase/decrease if input freq matches feedback
 void test2 () {
-    arg argall;
-    argall.inputAudioPath = "./Asine.wav";
-    argall.outputAudioPath = "./AsineIIR.wav";
-    argall.blockSize = 1024;
-    argall.filterType = CCombFilterIf::kCombIIR;
-    argall.gain = -1;
-    argall.delay = 0;
-    filtering(argall);
+
 }
 
-//// FIR/IIR: correct result for VARYING input block size
+// FIR/IIR: correct result for VARYING input block size
 void test3_FIR () {
-    arg argall;
-    argall.inputAudioPath = "./Asine.wav";
-    argall.outputAudioPath = "./AsineFIRBlock.wav";
-    argall.blockSize = 512; //1024
-    argall.filterType = CCombFilterIf::kCombFIR;
-    argall.gain = 0.5;
-    argall.delay = 0.5;
-    filtering(argall);
+
 }
 
 void test3_IIR () {
-    arg argall;
-    argall.inputAudioPath = "./Asine.wav";
-    argall.outputAudioPath = "./AsineIIRBlock.wav";
-    argall.blockSize = 512; //1024
-    argall.filterType = CCombFilterIf::kCombIIR;
-    argall.gain = 0.5;
-    argall.delay = 0.5;
-    filtering(argall);
+
 }
 
 // FIR/IIR: correct processing for zero input signal
 void test4_FIR () {
-    arg argall;
-    argall.inputAudioPath = "./AsineFIR.wav";
-    argall.outputAudioPath = "./ZeroOutputFIR.wav";
-    argall.blockSize = 1024;
-    argall.filterType = CCombFilterIf::kCombFIR;
-    argall.gain = 0.5;
-    argall.delay = 0.5;
-    filtering(argall);
+
 }
 
 void test4_IIR () {
-    arg argall;
-    argall.inputAudioPath = "./AsineFIR.wav";
-    argall.outputAudioPath = "./ZeroOutputIIR.wav";
-    argall.blockSize = 1024;
-    argall.filterType = CCombFilterIf::kCombIIR;
-    argall.gain = 0.5;
-    argall.delay = 0.5;
-    filtering(argall);
+
 }
 
 // One more additional MEANINGFUL test to verify your filter implementation
