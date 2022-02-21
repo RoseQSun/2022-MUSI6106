@@ -82,6 +82,9 @@ Error_t CCombFilterFIR::process(float **ppfInputBuffer, float **ppfOutputBuffer,
 
 Error_t CCombFilterIIR::process(float **ppfInputBuffer, float **ppfOutputBuffer, int iNumberOfFrames)
 {
+    if (fGain <= -1){
+        return Error_t::kFunctionInvalidArgsError;
+    }
     for (int i=0; i<iNumChannels; ++i){
         for (int j=0; j<iNumberOfFrames; ++j){
             ppfOutputBuffer[j][i] = ppfInputBuffer[j][i] + fGain * ppRingBuffer[j]->getPostInc();
