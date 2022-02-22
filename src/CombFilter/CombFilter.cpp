@@ -71,10 +71,10 @@ void CCombFilterBase::reset() {
 
 Error_t CCombFilterFIR::process(float **ppfInputBuffer, float **ppfOutputBuffer, int iNumberOfFrames)
 {
-    for (int i=0; i<iNumberOfFrames; ++i){
-        for (int j=0; j<iNumChannels; ++j){
-            ppRingBuffer[j]->putPostInc(ppfInputBuffer[j][i]);
-            ppfOutputBuffer[j][i] = ppfInputBuffer[j][i] + fGain * ppRingBuffer[j]->getPostInc();
+    for (int i=0; i<iNumChannels; ++i){
+        for (int j=0; j<iNumberOfFrames; ++j){
+            ppRingBuffer[i]->putPostInc(ppfInputBuffer[i][j]);
+            ppfOutputBuffer[i][j] = ppfInputBuffer[i][j] + fGain * ppRingBuffer[i]->getPostInc();
         }
     }
     return Error_t::kNoError;
@@ -87,8 +87,8 @@ Error_t CCombFilterIIR::process(float **ppfInputBuffer, float **ppfOutputBuffer,
     }
     for (int i=0; i<iNumChannels; ++i){
         for (int j=0; j<iNumberOfFrames; ++j){
-            ppfOutputBuffer[j][i] = ppfInputBuffer[j][i] + fGain * ppRingBuffer[j]->getPostInc();
-            ppRingBuffer[j]->putPostInc(ppfOutputBuffer[j][i]);
+            ppfOutputBuffer[i][j] = ppfInputBuffer[i][j] + fGain * ppRingBuffer[i]->getPostInc();
+            ppRingBuffer[i]->putPostInc(ppfOutputBuffer[i][j]);
         }
     }
     return Error_t::kNoError;
