@@ -5,6 +5,8 @@
 #include "MUSI6106Config.h"
 
 #include "AudioFileIf.h"
+#include "Fft.h"
+#include "RingBuffer.h"
 
 using std::cout;
 using std::endl;
@@ -16,18 +18,25 @@ void    showClInfo();
 // main function
 int main(int argc, char* argv[])
 {
-    std::string             sInputFilePath,                 //!< file paths
-        sOutputFilePath;
+    std::string             sInputFilePath, sOutputFilePath;
 
     static const int        kBlockSize = 1024;
 
     clock_t                 time = 0;
 
     float** ppfAudioData = 0;
+    float* pfMag = 0; //magnitude
+
+    CRingBuffer<float>* pRingBuffer = 0;
+    CFft* pFft = 0;
+
 
     CAudioFileIf* phAudioFile = 0;
     std::fstream            hOutputFile;
     CAudioFileIf::FileSpec_t stFileSpec;
+
+    int iBlockLength = 0;
+    int iHopLength = 0;
 
     showClInfo();
 
@@ -86,6 +95,13 @@ int main(int argc, char* argv[])
     }
 
     time = clock();
+    //////////////////////////////////////////////////////////////////////////////
+    // initializing
+    pRingBuffer = new CRingBuffer<float>(kBlockSize);
+
+    CFft::createInstance(pFft);
+    pFft->initInstance(kBlockSize);
+
 
     //////////////////////////////////////////////////////////////////////////////
     // get audio data and write it to the output text file (one column per channel)
