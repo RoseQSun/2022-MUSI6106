@@ -1,6 +1,7 @@
 set (APP MUSI6106Exec)
 
 set (AudioLIB AudioFileIO)
+set (CombFilterLIB CombFilter)
 set (VibratoLIB Vibrato)
 
 ## get all source files (note: this is considered bad style, one could also add file names individually)
@@ -14,5 +15,6 @@ add_inc_directories ()
 add_executable(${APP} ${${APP}_SOURCES} ${${APP}_HEADERS})
 
 # link the libraries
+target_link_libraries(${APP} ${LIB} ${AudioLIB} ${CombFilterLIB} ${SndLIB} ${OS_LIBS})
 target_link_libraries(${APP} ${LIB} ${VibratoLIB} ${AudioLIB} ${SndLIB} ${OS_LIBS})
 
